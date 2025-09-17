@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from .db import Base, engine
+from .routers import auth
 
 app = FastAPI(title="Home Budget API", version="0.1.0")
 
-# Create tables on startup for now (we can switch to Alembic later)
 Base.metadata.create_all(bind=engine)
+
+app.include_router(auth.router)
 
 @app.get("/health")
 def health():
