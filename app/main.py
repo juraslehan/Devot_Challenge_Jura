@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from .db import Base, engine
-from .routers import auth, categories
+from .routers import auth, categories, expenses
 
 app = FastAPI(title="Home Budget API", version="0.1.0")
 
@@ -8,6 +8,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(auth.router)
 app.include_router(categories.router)
+app.include_router(expenses.router)
 
 @app.get("/health")
 def health():

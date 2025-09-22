@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from datetime import datetime, date
+from decimal import Decimal
 
 # for register requests
 class UserCreate(BaseModel):
@@ -27,6 +28,22 @@ class CategoryCreate(BaseModel):
 class CategoryRead(BaseModel):
     id: int
     name: str
+
+    class Config:
+        from_attributes = True
+
+class ExpenseCreate(BaseModel):
+    description: str
+    amount: Decimal
+    date: datetime
+    category_id: int
+
+class ExpenseRead(BaseModel):
+    id: int
+    description: str
+    amount: Decimal
+    date: date
+    category_id: int
 
     class Config:
         from_attributes = True
