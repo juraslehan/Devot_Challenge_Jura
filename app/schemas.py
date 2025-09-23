@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime, date
 from decimal import Decimal
+from typing import List
 
 # for register requests
 class UserCreate(BaseModel):
@@ -48,3 +49,19 @@ class ExpenseRead(BaseModel):
     class Config:
         from_attributes = True
 
+class BalanceRead(BaseModel):
+    starting_balance: int
+    total_expenses: Decimal
+    balance: Decimal
+
+class CategoryTotal(BaseModel):
+    category_id: int
+    name: str
+    total: Decimal
+
+class ReportSummary(BaseModel):
+    period: str
+    start: date
+    end: date
+    total_expenses: Decimal
+    category_totals: List[CategoryTotal]
