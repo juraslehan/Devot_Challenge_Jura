@@ -43,3 +43,48 @@ def list_categories(
         .all()
     )
     return rows
+
+@router.put("/{category_id}", response_model=schemas.CategoryRead)
+def update_category(
+    category_id: int,
+    data: schemas.CategoryCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    cat = db.query(models.Category).filter(
+        models.Category.id == category_id,
+        models.Category.user_id == current_user.id
+    ).first()
+    if not cat:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    dup = db.query(models.Category).filter(
+        models.Category.user_id == current_user.id,
+        models.Category.name == data.name,
+        models.Category.id != category_id
+    ).first()
+    if dup:
+        raise HTTPException(status_code=400, detail="Category with this name already exists")
+
+    cat.name = data.name
+    db.commit()
+    db.refresh(cat)
+    return cat
+
+@router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_category(
+    category_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    cat = db.query(models.Category).filter(
+        models.Category.id == category_id,
+        models.Category.user_id == current_user.id
+    ).first()
+    if not cat:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    db.delete(cat)
+    db.commit()
+    return
+
